@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+<title>Photo Search Engine</title>
+<style>
+  body
+    {
+      font-family: "Rubik", sans-serif;
+      text-align: center;
+      background-color: #f0f8ff;
+      color: #001f3f;
+      font-size: 1.5vw;
+    }
+    h2, hr, div, form 
+    {
+      font-family: "Rubik", sans-serif;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 80%;
+    }
+
+    .hero-section {
+      position: relative;
+      overflow: hidden;
+      padding: 40px 0;
+      margin-bottom: 20px;
+    }
+
+    /* Full-bleed background image with reduced brightness */
+    .hero-section::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;              /* full viewport width */
+      height: 100%;              /* from top of section to bottom of section */
+      background-image: url('');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.7);   /* reduce brightness */
+      z-index: -1;               /* sit behind content */
+    }
+
+    /* Ensure text/content is above the background */
+    .hero-section > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-section {
+      position: relative;
+      overflow: hidden;
+      padding: 40px 0;
+      margin-bottom: 20px;
+
+      width: 100%;
+      max-width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+
+      max-height: 130px; 
+      transition: max-height 0.8s ease; /* Smooth slide animation */
+      cursor: pointer;
+    }
+
+    .hero-section:hover {
+      max-height: 800px; /* Big enough to show all hidden content */
+    }
+
+    .hero-section h3, 
+    .hero-section h4, 
+    .hero-section p {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .hero-section:hover h3, 
+    .hero-section:hover h4, 
+    .hero-section:hover p {
+      opacity: 1;
+      transition-delay: 0.3s; /* Wait for the box to open a bit before showing text */
+    }
+
+    p{
+      font-family: "Rubik", sans-serif;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 80%;
+    }
+    
+    img
+    {
+      max-width: 100%;
+      height: auto;
+      border: 2px solid #a8dadc;
+      border-radius: 4px;
+      box-shadow: 0 4px 6px rgba(0, 31, 63, 0.1);
+    }
+
+    button
+    {
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      margin-left: 5px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    button:hover
+    {
+      background-color: #357bd8;
+    }
+
+    #keywordInput
+    {
+      padding: 8px;
+      border: 2px solid #a8dadc;
+      border-radius: 5px;
+      width: 40%;
+      max-width: 90%;
+      color: #001f3f;
+      box-sizing: border-box;
+    }
+    #photoInput
+    {
+      padding: 8px;
+      border: 2px solid #a8dadc;
+      border-radius: 5px;
+      max-width: 90%;
+      color: #001f3f;
+      box-sizing: border-box;
+    }
+
+
+
+    hr
+    {
+      border: 0;
+      height: 1px;
+      background-image: linear-gradient(to right, rgba(0, 0, 0, 0), #a8dadc, rgba(0, 0, 0, 0));
+      width: 80%; 
+      margin: 20px auto;
+    }
+    
+    #results
+    {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+
+  #results 
+  {
+      margin-top: 20px;
+      max-width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%; /* Important: Table should use the full width of its parent */
+      border-collapse: collapse;
+      table-layout: fixed; /* Ensures columns are exactly 25% */
+  }
+
+  #results td {
+      padding: 10px 5px;
+      text-align: center;
+      vertical-align: top;
+      width: 25%; /* Set to 25% for 4 columns (100% / 4) */
+  }
+
+  .filename-label {
+      font-size: 0.8em; /* Adjusted font size for readability */
+      margin-top: 5px;
+      word-wrap: break-word;
+      font-weight: bold;
+      display: block;
+      color: #001f3f;
+  }
+  /* --- NEW CSS FOR TAG BUTTONS --- */
+#tagButtons {
+    max-width: 80%;
+    margin: 15px auto;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; 
+}
+
+.tag-button {
+    /* Inherits basic button styles */
+    flex: 1; 
+    min-width: 100px; 
+    max-width: 180px; 
+    height: 60px;
+    margin: 5px;
+    background-size: cover;
+    background-position: center;
+    color: white; 
+    font-size: 1.1em;
+    text-shadow: 0 0 3px black, 0 0 3px black; /* Outline for readability over image */
+    font-weight: 700;
+    /* This creates the 50% opacity overlay over the background image */
+    background-blend-mode: multiply; 
+    background-color: rgba(0, 0, 0, 0.5); 
+    border: 2px solid #a8dadc;
+}
+</style>
+<head>
+  <title>Photo Search Engine</title>
+  <!-- Firebase JS SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body onload="generateTagButtons()">
+  <div class="hero-section">
+  <h2>SERVERLESS PHOTO SEARCH ENGINE</h2>
+  <h3>CSE 5333 Cloud Computing Project</h3>
+  <h4 style="text-align: right; margin-right: 10%;">
+    Safiuddin Fazil Mohammed<br>
+    Haresh Goutham Prageeth
+  </h4>
+  <p style="font-size: 1vw;">
+  This serverless photo search engine lets you upload images and automatically tag them using Google Cloud Vision.
+  Your photos are stored securely in Cloud Storage, while Firestore keeps track of labels so you can quickly search
+  for images by keyword.
+  </p>
+  </div>
+
+  <h2>Upload a Photo</h2>
+  <input type="file" id="photoInput" accept="image/*" multiple><button onclick="uploadPhoto()">Upload</button>
+
+  <h2>Search Photos by Keyword</h2>
+  <input type="text" id="keywordInput" placeholder="Enter keyword to search">
+  
+  <div id="tagButtons"></div>
+  <div id="results"></div>
+  <script>
+    function capitalizeFirstLetter(str) {
+    if (!str) return str;
+    // 1. Convert the whole string to lowercase
+    const lower = str.toLowerCase();
+    // 2. Take the first character, capitalize it, and append the rest of the string
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+    }
+    // Firebase config
+    // const firebaseConfig = {
+    //     *** Firebase config ***
+    // };
+    firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
+    const db = firebase.firestore();
+
+    const AVAILABLE_TAGS = [
+  "Snow", "Car", "Nature", "Mountain", "Sky", "Road", "Beach", "Water", "Boat", "Furniture",
+  "City", "Food", "Bridge", "Wildlife", "Sea", "Gadget", "Rock", "Morning", "Cloud", "Tree", "Star", "Symmetry"
+];
+
+// Helper function to get random unique elements
+function getRandomElements(arr, n) {
+    let result = [...arr];
+    for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result.slice(0, n);
+}
+
+// Function to generate and insert the 5 random tag buttons
+window.generateTagButtons = async function() {
+    const tagButtonsDiv = document.getElementById('tagButtons');
+    const randomTags = getRandomElements(AVAILABLE_TAGS, 5);
+
+    tagButtonsDiv.innerHTML = ''; // Clear previous buttons
+    tagButtonsDiv.style.display = 'flex'; // Ensure it's visible
+
+    // Fetch a random image for each tag from Firestore
+    for (const tag of randomTags) {
+        // Query Firestore for a photo with the current tag.
+        // limit(1) makes it fast, and orderBy('filename') ensures a consistent result set
+        // to pick from if you wanted to use a random offset in a more advanced setup.
+        const snapshot = await db.collection("photos").where("labels", "array-contains", tag).limit(1).get();
+        let imageUrl = '';
+
+        if (!snapshot.empty) {
+            // Found an image, use its URL
+            const data = snapshot.docs[0].data();
+            imageUrl = "" + data.filename;
+        } else {
+            // Fallback if no photo is found for the tag
+            console.warn(`No photo found in Firestore for tag: ${tag}.`);
+        }
+
+        const button = document.createElement('button');
+        button.textContent = tag;
+        button.className = 'tag-button';
+
+        if (imageUrl) {
+            button.style.backgroundImage = `url('${imageUrl}')`;
+        }
+
+        // Click functionality: set input value and search
+        button.onclick = () => {
+            document.getElementById('keywordInput').value = tag;
+            window.searchPhotos();
+        };
+        tagButtonsDiv.appendChild(button);
+    }
+};
+
+    // Upload photo function
+    window.uploadPhoto = async function() {
+      const file = document.getElementById('photoInput').files[0];
+      
+      // 1. Check if file exists
+      if (!file) return alert("Choose a file first.");
+
+      // 2. NEW: Check if the file is actually an image
+      if (!file.type.startsWith('image/')) {
+        alert("Invalid file type. Please upload an image (JPG, PNG, etc).");
+        return;
+      }
+      
+      const uniqueFilename = Date.now() + "_" + file.name;
+      const ref = storage.ref().child(uniqueFilename);
+      await ref.put(file);
+
+      alert("Photo uploaded! You can search in a minute.");
+    };
+
+window.searchPhotos = async function() {
+            const keyword = capitalizeFirstLetter(document.getElementById('keywordInput').value.trim());
+            const resultsDiv = document.getElementById('results');
+            
+            // NEW: Get button container and hide it
+            const tagButtonsDiv = document.getElementById('tagButtons'); 
+            tagButtonsDiv.style.display = 'none'; 
+
+            resultsDiv.innerHTML = `<div>Search input: <b>${keyword}</b></div><div>Searching...</div>`; 
+
+            const snapshot = await db.collection("photos").where("labels", "array-contains", keyword).get();
+            
+            if (snapshot.empty) {
+                resultsDiv.innerHTML = `<div style="width: 100%; text-align: center;">No results found for "${keyword}"!</div>`;
+                // NEW: Regenerate and show buttons if no results
+                generateTagButtons();
+                return;
+            }
+            
+            let html = '<table><tbody><tr>'; // Start the table and the first row
+            let photoCount = 0;
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                let gcsUrl = "" + data.filename;
+                
+                // Close the current row and start a new one after every 3rd photo
+                if (photoCount > 0 && photoCount % 3 === 0) {
+                    html += '</tr><tr>'; 
+                }
+                
+                // Add the table cell (<td>) with the photo and filename (inside a span)
+                html += `
+
+                    <td>
+                      <a href="${gcsUrl}" target="_blank">
+                      <img id ="img-item" src="${gcsUrl}" >
+                      </a>
+                    </td>
+                    
+                `;
+
+                photoCount++;
+            });
+            
+            // Close the final row and table
+            html += '</tr></tbody></table>';
+            
+            resultsDiv.innerHTML = html;
+            
+            // NEW: Re-show buttons after results are displayed
+            generateTagButtons(); 
+        };
+        document.getElementById("keywordInput").addEventListener("keyup", function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault(); 
+                searchPhotos(); 
+            }
+        });
+  </script>
+</body>
+</html>
